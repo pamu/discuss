@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging}
  * Created by pnagarjuna on 05/05/15.
  */
 object Storage {
-  case class Add(id: Long, text: String)
+  case class Add(text: String)
   case class Remove(id: Long)
   case class Get(id: Long)
 }
