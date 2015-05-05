@@ -1,9 +1,37 @@
 @(message: String)
 
 @main("Discuss") {
-
     <div class="well alert alert-info">
-        <h1>@message</h1>
+        <div class="row-fluid">
+            <span class="span6">
+                <div>
+                    <h1 id="discussions">500</h1>
+                    <h6>Discussions</h6>
+                </div>
+            </span>
+            <span class="span6">
+                <div>
+                    <h1 id="comments">1500</h1>
+                    <h6>Comments</h6>
+                </div>
+            </span>
+        </div>
     </div>
 
+    <button id="start" class="btn btn-success">Start a new Discussion</button>
+
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Start Discussion</h3>
+        </div>
+        <div class="modal-body">
+            <textarea id="discussion" type="text" placeholder="Enter the Discussion topic"></textarea>
+            <span id="msgCenter"></span>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button id="done" class="btn btn-primary">Done</button>
+        </div>
+    </div>
 }
