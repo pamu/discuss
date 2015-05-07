@@ -8,5 +8,10 @@ object Application extends Controller {
   def index = Action {
     Ok(views.html.index("Discuss"))
   }
+
+  def discussion() = Action(parse.json) { implicit request =>
+    Ok("")
+  }
+
   
  }

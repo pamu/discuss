@@ -3,6 +3,7 @@
 # ~~~~
 
 GET     /                           controllers.Application.index()
+POST    /discussion                 controllers.Application.discussion()
 
 
 # Map static resources from the /public folder to the /assets URL path
