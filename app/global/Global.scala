@@ -14,6 +14,12 @@ object Global extends GlobalSettings {
   override def onStart(app: Application): Unit = {
     super.onStart(app)
     Logger.info("App started")
+    import DataStore._
+
+    val discussions = List[String]
+    dataStore ! Entry(1, discussions)
+    val comments = Map[Long, List[String]]
+    dataStore ! Entry(2, comments)
   }
 
   override def onStop(app: Application): Unit = {
