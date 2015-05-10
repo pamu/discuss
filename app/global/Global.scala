@@ -1,6 +1,6 @@
 package global
 
-import actors.DataStore
+import actors.{Counter, DataStore}
 import akka.actor.{Props, ActorSystem}
 import play.api.{Logger, Application, GlobalSettings}
 
@@ -10,6 +10,7 @@ import play.api.{Logger, Application, GlobalSettings}
 object Global extends GlobalSettings {
   val system = ActorSystem("DataStore")
   lazy val dataStore = system.actorOf(Props[DataStore], "DataStore")
+  lazy val counter = system.actorOf(Props[Counter], "Counter")
 
   override def onStart(app: Application): Unit = {
     super.onStart(app)

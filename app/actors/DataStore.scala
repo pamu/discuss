@@ -39,6 +39,6 @@ class DataStore extends Actor with ActorLogging {
       log.info(s"${Evict(id)}")
       data -= id
       sender ! Done(message = "Evicted")
-    case x => log.info("${x.getClass}")
+    case x => log.info(s"unknown message of ${x.getClass}")
   }
 }
