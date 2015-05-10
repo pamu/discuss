@@ -1,16 +1,11 @@
 package controllers
 
-import actors.Client.Result
-import actors.Counters.{Discussions, Comments, CounterResult}
-import actors.DataStore.Entry
-import actors.{Counters, DataStore}
-import global.Global
 import play.api.libs.json.{JsError, JsSuccess, JsPath, Reads}
 import play.api.mvc.{Action, Controller}
 
-import akka.pattern.ask
-
 import scala.concurrent.Future
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 
 object Application extends Controller {
@@ -25,19 +20,13 @@ object Application extends Controller {
 
   def discussion() = Action.async(parse.json) { implicit request =>
     request.body.validate[Discussion] match {
-      case success: JsSuccess[Discussion] =>
+      case success: JsSuccess[Discussion] => {
         val value = success.get.name
-        val f: Future[CounterResult] = (Global.counter ? Counters.Discussions).mapTo[CounterResult]
-
-        f match {
-          case Discussions(count) =>
-
-          case Comments(count) =>
-        }
-        //Global.dataStore ? DataStore.Entry
         Future(Ok(""))
-      case error: JsError =>
+      }
+      case error: JsError => {
         Future(Ok(""))
+      }
     }
   }
 

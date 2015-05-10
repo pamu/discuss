@@ -1,16 +1,15 @@
 package actors
 
 import akka.actor.{Actor, ActorLogging}
-import akka.io.Tcp.Message
 
 /**
  * Created by pnagarjuna on 07/05/15.
  */
 
 object DataStore {
-  case class Entry(id: Long, value: Any)
-  case class Get(id: Long)
-  case class Evict(id: Long)
+  case class Entry(key: String, value: Any)
+  case class Get(key: String)
+  case class Evict(key: String)
 }
 
 object Client {
@@ -23,21 +22,24 @@ object Client {
 }
 
 class DataStore extends Actor with ActorLogging {
-  var data = Map.empty[Long, Any]
+  var data = Map.empty[String, Any]
   import DataStore._
   import Client._
 
   override def receive = {
-    case Entry(id, value) =>
-      log.info(s"${Entry(id, value)}")
-      data += (id -> value)
-      sender ! Done(message = "successfully added")
-    case Get(id) =>
-      log.info(s"${Get(id)}")
-      sender ! Value(message = "success", data(id))
-    case Evict(id) =>
-      log.info(s"${Evict(id)}")
-      data -= id
+    case Entry(key, value) =>
+      log.info(s"${Entry(key, value)}")
+      if (data contains(key)) {
+        sender ! Error("Key exists")
+      } else {
+        sender ! Done(message = "Successfully added")
+      }
+    case Get(key) =>
+      log.info(s"${Get(key)}")
+      sender ! Value(message = "Success", data(key))
+    case Evict(key) =>
+      log.info(s"${Evict(key)}")
+      data -= key
       sender ! Done(message = "Evicted")
     case x => log.info(s"unknown message of ${x.getClass}")
   }
