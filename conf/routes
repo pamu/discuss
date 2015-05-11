@@ -5,7 +5,8 @@
 GET     /                           controllers.Application.index()
 POST    /discussion                 controllers.Application.discussion()
 GET     /discussions                controllers.Application.discussions()
-GET     /discussion/:id             controllers.Application.discuss(id: Long)
+GET     /discuss/:id                controllers.Application.discuss(id: Long)
+POST    /comment                    controllers.Application.comment()
 
 
 # Map static resources from the /public folder to the /assets URL path

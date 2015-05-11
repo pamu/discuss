@@ -1,0 +1,12 @@
+@(message: String, id: Long)
+
+@main("Discussion"){
+    <div id="msg_center"></div>
+    <div id="discussion_headline" class="well alert alert-info"><h3>Discussion: @message</h3></div>
+    <div id="comments"></div>
+    <div id="comments_section" class="well alert alert-info row-fluid">
+        <label class="span2">Comment:</label>
+        <textarea id="comment" class="span6" typeof="text" placeholder="Comment Here"></textarea>
+        <button id="enter" class="btn">Submit</button>
+    </div>
+}

@@ -8,7 +8,7 @@ $(function() {
          success: function(msg) {
                 if (msg.discussions) {
                     for(var i = 0; i < msg.discussions.length; i++) {
-                        $("#discussions").append('<div> Discussion: <a href="/dicussion/'+ msg.discussions[i].id +'">' + msg.discussions[i].headline + '</a></div>')
+                        $("#discussions").append('<div> Discussion: <a href="/discuss/'+ msg.discussions[i].id +'">' + msg.discussions[i].headline + '</a></div>')
                     }
                 }
                 if (msg.error) {

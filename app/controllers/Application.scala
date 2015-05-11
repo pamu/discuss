@@ -65,7 +65,26 @@ object Application extends Controller {
     }).recover{case throwable: Throwable => Ok(Json.obj("error" -> throwable.getMessage))}
   }}
 
-  def discuss(id: Long) = Action { implicit request =>
-    Ok("")
+  def discuss(id: Long) = Action.async { implicit request =>
+    val future = (Global.dataStore ? DataStore.Get("discussions")).mapTo[Value]
+    future.flatMap {value => {
+      val listMap: ListMap[Long, String] = value.value.asInstanceOf[ListMap[Long, String]]
+      Future(Ok(views.html.discuss(listMap(id), id)))
+    }}
+  }
+  case class Comment(did: Long, comment: String)
+  implicit val commentReads: Reads[Comment] = (
+    (JsPath \ "did").read[Long] and
+      (JsPath \ "comment").read[String]
+    )(Comment.apply _)
+  def comment() = Action.async(parse.json) { implicit request =>
+    request.body.validate[Comment] match {
+      case success: JsSuccess[Comment] => {
+        Future(Ok(""))
+      }
+      case error: JsError => {
+        Future(Ok(""))
+      }
+    }
   }
  }
