@@ -8,6 +8,7 @@ import akka.actor.{Actor, ActorLogging}
 
 object DataStore {
   case class Entry(key: String, value: Any)
+  case class Update(key: String, value: Any)
   case class Get(key: String)
   case class Evict(key: String)
 }
@@ -32,7 +33,16 @@ class DataStore extends Actor with ActorLogging {
       if (data contains(key)) {
         sender ! Error("Key exists")
       } else {
+        data += (key -> value)
+        log.info(data.mkString(" "))
         sender ! Done(message = "Successfully added")
+      }
+    case Update(key, value) =>
+      if (data contains key) {
+        data += (key -> value)
+        sender ! Done(message = "Successfully Updated")
+      } else {
+        sender() ! Error("Key does not exist")
       }
     case Get(key) =>
       log.info(s"${Get(key)}")

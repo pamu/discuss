@@ -16,7 +16,8 @@ object Global extends GlobalSettings {
   override def onStart(app: Application): Unit = {
     super.onStart(app)
     Logger.info("App started")
-    dataStore ! DataStore.Entry("discussions", ListMap.empty[Long, String])
+    val discussions = ListMap[Long, String](1L -> "java", 2L -> "scala")
+    dataStore ! DataStore.Entry("discussions", discussions)
     dataStore ! DataStore.Entry("comments", ListMap.empty[Long, List[Long]])
   }
 
