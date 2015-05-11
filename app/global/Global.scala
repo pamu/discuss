@@ -18,7 +18,7 @@ object Global extends GlobalSettings {
     Logger.info("App started")
     val discussions = ListMap[Long, String](1L -> "java", 2L -> "scala")
     dataStore ! DataStore.Entry("discussions", discussions)
-    dataStore ! DataStore.Entry("comments", ListMap.empty[Long, List[Long]])
+    dataStore ! DataStore.Entry("discussion_1", List[String]("java is a multi purpose programming language"))
   }
 
   override def onStop(app: Application): Unit = {

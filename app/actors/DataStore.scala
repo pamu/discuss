@@ -46,7 +46,9 @@ class DataStore extends Actor with ActorLogging {
       }
     case Get(key) =>
       log.info(s"${Get(key)}")
-      sender ! Value(message = "Success", data(key))
+      if (! data.contains(key)) {
+        sender ! Error(message = "key does not exist")
+      } else sender ! Value(message = "Success", data(key))
     case Evict(key) =>
       log.info(s"${Evict(key)}")
       data -= key

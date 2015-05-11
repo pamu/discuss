@@ -33,17 +33,23 @@ object Application extends Controller {
     request.body.validate[Discussion] match {
       case success: JsSuccess[Discussion] => {
         val discussion = success.get.name
-        val future = (Global.dataStore ? DataStore.Get("discussions")).mapTo[Value]
-        future.flatMap { value => {
-          val listMap: ListMap[Long, String] = value.value.asInstanceOf[ListMap[Long, String]]
-          val newListMap = listMap + ((listMap.size + 1).toLong -> discussion)
-          val f = (Global.dataStore ? DataStore.Update("discussions", newListMap)).mapTo[Result]
-          f.map { result => {
-            result match {
-              case Done(msg) => Ok(Json.obj("success" -> msg))
-              case Error(msg) => Ok(Json.obj("failure" -> msg))
+        val future = (Global.dataStore ? DataStore.Get("discussions")).mapTo[Result]
+        future.flatMap { result => {
+          result match {
+            case value: Value => {
+              val listMap: ListMap[Long, String] = value.value.asInstanceOf[ListMap[Long, String]]
+              val newListMap = listMap + ((listMap.size + 1).toLong -> discussion)
+              val f = (Global.dataStore ? DataStore.Update("discussions", newListMap)).mapTo[Result]
+              f.map { result => {
+                result match {
+                  case Done(msg) => Ok(Json.obj("success" -> msg))
+                  case Error(msg) => Ok(Json.obj("failure" -> msg))
+                }
+              }}
             }
-          }}
+            case error: Error => Future(Ok(Json.obj("failure" -> error.message)))
+          }
+
         }}
       }
       case error: JsError => {
@@ -80,10 +86,25 @@ object Application extends Controller {
   def comment() = Action.async(parse.json) { implicit request =>
     request.body.validate[Comment] match {
       case success: JsSuccess[Comment] => {
-        Future(Ok(""))
+        val f = (Global.dataStore ? DataStore.Get("discussion_" + success.get.did)).mapTo[Result]
+        f.flatMap{result => {
+          result match {
+            case value: Value => {
+              val future = (Global.dataStore ? DataStore.Update("discussion_" + success.get.did, value.value.asInstanceOf[List[String]] ++ List(success.get.comment))).mapTo[Result]
+              future.flatMap { result => {
+                result match {
+                  case Done(msg) =>  Future(Ok(Json.obj("done" -> msg)))
+                  case Error(msg) => Future(Ok(Json.obj("error" -> msg)))
+                }
+              }}
+            }
+            case error: Error => Future(Ok(Json.obj("error" -> error.message)))
+          }
+        }}
+
       }
       case error: JsError => {
-        Future(Ok(""))
+        Future(Ok(Json.obj("error" -> "json format not accepted")))
       }
     }
   }
