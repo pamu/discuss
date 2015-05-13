@@ -1,12 +1,64 @@
 @(message: String, id: Long)
 
 @main("Discussion"){
+    <script type="text/javascript">
+        function load(id) {
+        $.ajax({
+                     url: '/comments/'+ id + '',
+                     type: 'GET',
+                     contentType: 'application/json; charset=utf-8',
+                     dataType: 'json',
+                     async: true,
+                     success: function(msg) {
+                            if (msg.comments) {
+                                for(var i = 0; i < msg.comments.length; i++) {
+                                    $("#comments").append('<div class="well alert alert-info">' + msg.comments[i] + '</div>')
+                                }
+                            }
+                            if (msg.error) {
+                                $("#msg_center").html('<span> Could not load data !!!, reason: ' + msg.error + '</span>');
+                            }
+                         }
+                     });
+        }
+        load(@id)
+    </script>
+    <script type="text/javascript">
+        function post(did) {
+        var comment = $("#comment").val();
+        if (comment.length) {
+            $("#comment").val('')
+            $("#comments").append('<div class="well alert alert-info">' + comment + '</div>');
+
+            var json = '{ "did" : ' + did + ', "comment" : "' + comment + '"}';
+            console.log(json);
+            $.ajax({
+                                   url: '/comment',
+                                   type: 'POST',
+                                   data: json,
+                                   contentType: 'application/json; charset=utf-8',
+                                   dataType: 'json',
+                                   async: true,
+                                   success: function(msg) {
+                                       if(msg.done) {
+                                            alert(msg.done);
+                                       }
+                                       if (msg.error) {
+                                            alert(msg.error);
+                                       }
+                                   }
+                               });
+                    } else {
+                        $("#msg_center").html('<span class="alert alert-error">Discussion should not be empty.</span>');
+                    }
+        }
+    </script>
     <div id="msg_center"></div>
     <div id="discussion_headline" class="well alert alert-info"><h3>Discussion: @message</h3></div>
     <div id="comments"></div>
     <div id="comments_section" class="well alert alert-info row-fluid">
         <label class="span2">Comment:</label>
-        <textarea id="comment" class="span6" typeof="text" placeholder="Comment Here"></textarea>
-        <button id="enter" class="btn">Submit</button>
+        <textarea id="comment" class="span6" type="text" placeholder="Comment Here"></textarea>
+        <button id="enter" class="btn" onclick='post(@id)'>Submit</button>
     </div>
 }

@@ -3,6 +3,7 @@ package controllers
 import actors.Client.{Error, Done, Result, Value}
 import actors.DataStore
 import global.Global
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
@@ -90,7 +91,9 @@ object Application extends Controller {
         f.flatMap{result => {
           result match {
             case value: Value => {
-              val future = (Global.dataStore ? DataStore.Update("discussion_" + success.get.did, value.value.asInstanceOf[List[String]] ++ List(success.get.comment))).mapTo[Result]
+              val newList = value.value.asInstanceOf[List[String]] ++ List(success.get.comment)
+              Logger.info("play log" + newList.mkString(" "))
+              val future = (Global.dataStore ? DataStore.Update("discussion_" + success.get.did, newList)).mapTo[Result]
               future.flatMap { result => {
                 result match {
                   case Done(msg) =>  Future(Ok(Json.obj("done" -> msg)))
@@ -108,4 +111,18 @@ object Application extends Controller {
       }
     }
   }
+
+  def comments(id: Long) = Action.async { implicit request => {
+    val key = "discussion_"+id
+    val f = (Global.dataStore ? DataStore.Get(key)).mapTo[Result]
+    f.flatMap {result => {
+      result match {
+        case value: Value => {
+          val list = value.value.asInstanceOf[List[String]]
+          Future(Ok(Json.obj("comments" -> list)))
+        }
+        case error: Error => Future(Ok(Json.obj("error" -> error.message)))
+      }
+    }}.recover{ case throwable: Throwable => Ok(Json.obj("error" -> throwable.getMessage))}
+  }}
  }

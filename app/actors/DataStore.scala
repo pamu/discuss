@@ -40,12 +40,16 @@ class DataStore extends Actor with ActorLogging {
     case Update(key, value) =>
       if (data contains key) {
         data += (key -> value)
+        log.info(data.mkString(" "))
         sender ! Done(message = "Successfully Updated")
       } else {
-        sender() ! Error("Key does not exist")
+        data += (key -> value)
+        log.info(data.mkString(" "))
+        sender() ! Done("Key does not exist, key created")
       }
     case Get(key) =>
       log.info(s"${Get(key)}")
+      log.info(data.mkString(" "))
       if (! data.contains(key)) {
         sender ! Error(message = "key does not exist")
       } else sender ! Value(message = "Success", data(key))

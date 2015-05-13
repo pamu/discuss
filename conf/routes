@@ -7,6 +7,7 @@ POST    /discussion                 controllers.Application.discussion()
 GET     /discussions                controllers.Application.discussions()
 GET     /discuss/:id                controllers.Application.discuss(id: Long)
 POST    /comment                    controllers.Application.comment()
+GET     /comments/:id               controllers.Application.comments(id: Long)
 
 
 # Map static resources from the /public folder to the /assets URL path
