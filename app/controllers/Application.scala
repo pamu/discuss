@@ -41,6 +41,7 @@ object Application extends Controller {
               val listMap: ListMap[Long, String] = value.value.asInstanceOf[ListMap[Long, String]]
               val newListMap = listMap + ((listMap.size + 1).toLong -> discussion)
               val f = (Global.dataStore ? DataStore.Update("discussions", newListMap)).mapTo[Result]
+              Global.dataStore ! DataStore.Update("discussion_"+newListMap.size, List[String]("Start Commenting ... :)"))
               f.map { result => {
                 result match {
                   case Done(msg) => Ok(Json.obj("success" -> msg))
@@ -54,7 +55,7 @@ object Application extends Controller {
         }}
       }
       case error: JsError => {
-        Future(Ok(Json.obj("failure" -> error.errors.mkString(" "))))
+        Future(Ok(Json.obj("failure" -> "bad json format")))
       }
     }
   }
