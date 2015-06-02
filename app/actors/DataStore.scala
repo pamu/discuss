@@ -1,3 +1,4 @@
+/*
 package actors
 
 import akka.actor.{Actor, ActorLogging}
@@ -60,3 +61,4 @@ class DataStore extends Actor with ActorLogging {
     case x => log.info(s"unknown message of ${x.getClass}")
   }
 }
+*/
